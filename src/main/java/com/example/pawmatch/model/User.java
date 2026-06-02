@@ -49,7 +49,20 @@ public class User implements UserDetails {
             regexp = "^$|^[689]\\d{7}$",
             message = "Phone number is optional, but must be 8 digits, starting with 6, 8, or 9."
     )
-    String phone;                                                       // String Phone
+    String phone;                                                               // String Phone
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private EnumHousingType housingType = EnumHousingType.HDB;                  // Enum Housing Type
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private EnumExperienceLevel experienceLevel = EnumExperienceLevel.NONE;     // String Housing Type
+
+    @Column
+    String imageUrl;                                                            // String Image URL
 
     // ^ start
     // At least:
