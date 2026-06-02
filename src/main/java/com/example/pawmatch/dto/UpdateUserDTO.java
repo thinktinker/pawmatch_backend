@@ -37,12 +37,12 @@ public class UpdateUserDTO {
     // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Please use a strong password.")
     private String password;
 
-    private String message;
+    private String phone;
+    private String address;
+    private String imageUrl;
     private String token;
     private String refreshToken;
     private String expirationTime;
     private EnumRole role;
-    private String phone;
-    private User user;
-
+    private String message;
 }

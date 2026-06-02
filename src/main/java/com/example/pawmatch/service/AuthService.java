@@ -44,6 +44,7 @@ public class AuthService {
                 .lastName(signupRequest.getLastName())
                 .email(signupRequest.getEmail())
                 .phone(signupRequest.getPhone())
+                .address(signupRequest.getAddress())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .build();
 
@@ -51,15 +52,20 @@ public class AuthService {
 
         if(result.getId() > 0){
 
+            // After the user has signed up, he/she can access the restricted pages
+            var token = jwtUtils.generateToken(result);
+            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), result);
+
             return UserDTO.builder()
                     .firstName(result.getFirstName())
                     .lastName(result.getLastName())
                     .email(result.getEmail())
+                    .phone(result.getPhone())
+                    .address(result.getAddress())
+                    .token(token)
+                    .refreshToken(refreshToken)
                     .message("User saved successfully.")
                     .build();
-            // option: generate a token for the end-user and access restricted pages immediately
-            // .setToken(jwtUtils.generateToken(user))
-
         }
 
         throw new RegistrationFailedException("Failed to register the user.");
@@ -128,6 +134,8 @@ public class AuthService {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .address(user.getAddress())
+                .imageUrl(user.getImageUrl())
                 .build();
     }
 
@@ -143,6 +151,9 @@ public class AuthService {
             _user.setLastName(updateRequest.getLastName());
             _user.setPhone(updateRequest.getPhone());
             _user.setEmail(updateRequest.getEmail());
+            _user.setAddress(updateRequest.getAddress());
+            _user.setImageUrl(updateRequest.getImageUrl());
+
 
             if(updateRequest.getPassword() != null && !updateRequest.getPassword().isEmpty())
                 _user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
@@ -151,30 +162,40 @@ public class AuthService {
         }).orElseThrow();
 
         var token = jwtUtils.generateToken(user);
-
         var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
 
         return UserDTO.builder()
-                .message("Profile updated successfully")
+                .message("Profile updated successfully.")
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .address(user.getAddress())
+                .imageUrl(user.getImageUrl())
                 .token(token)
                 .refreshToken(refreshToken)
                 .build();
     }
 
     // update userProfile by admin
-    public UserDTO adminUpdateProfile(User currentUser, User updateRequest){
+    public UserDTO adminUpdateProfile(User currentUser, UpdateUserDTO updateRequest) {
 
         User user = userRepository.findByEmail(currentUser.getEmail()).map(_user->{
             _user.setFirstName(updateRequest.getFirstName());
             _user.setLastName(updateRequest.getLastName());
             _user.setEmail(updateRequest.getEmail());
-            _user.setRole(updateRequest.getRole());
             _user.setPhone(updateRequest.getPhone());
-            _user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+            _user.setImageUrl(updateRequest.getImageUrl());
+
+            if(updateRequest.getRole() != null)
+                _user.setRole(updateRequest.getRole());
+
+            if(updateRequest.getAddress() != null && !updateRequest.getAddress().isEmpty())
+                _user.setAddress(updateRequest.getAddress());
+
+            if(updateRequest.getPassword() != null && !updateRequest.getPassword().isEmpty())
+                _user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+
             return userRepository.save(_user);
         }).orElseThrow();
 
@@ -184,6 +205,8 @@ public class AuthService {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .address(user.getAddress())
+                .imageUrl(user.getImageUrl())
                 .role(user.getRole())
                 .password(user.getPassword())
                 .build();

@@ -1,5 +1,6 @@
 package com.example.pawmatch.controller;
 
+import com.example.pawmatch.dto.UpdateUserDTO;
 import com.example.pawmatch.dto.UserDTO;
 import com.example.pawmatch.exception.ResourceNotFoundException;
 import com.example.pawmatch.model.User;
@@ -46,12 +47,12 @@ public class AdminUserController {
     }
 
     @PutMapping("/update/{id}") // Path variable
-    public ResponseEntity<Object> updateUser(@PathVariable("id") Integer id, @Valid @RequestBody User user) throws ResourceNotFoundException{
+    public ResponseEntity<Object> updateUser(@PathVariable("id") Integer id, @Valid @RequestBody UpdateUserDTO updateUser) throws ResourceNotFoundException{
 
         // find the user, else throw custom exception ResourceNotFoundException
         User currentUser = userService.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found."));
 
-        return new ResponseEntity<>(authService.adminUpdateProfile(currentUser, user), HttpStatus.OK); // or use NO_CONTENT
+        return new ResponseEntity<>(authService.adminUpdateProfile(currentUser, updateUser), HttpStatus.OK); // or use NO_CONTENT
 
     }
 

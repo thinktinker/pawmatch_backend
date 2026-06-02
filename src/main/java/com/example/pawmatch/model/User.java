@@ -65,6 +65,10 @@ public class User implements UserDetails {
     private String imageUrl;                                                    // String Image URL
 
     @Column
+    @NotBlank(message = "Address must not be empty.")
+    private String address;                                                     // String Address
+
+    @Column
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Application> applications;
 
