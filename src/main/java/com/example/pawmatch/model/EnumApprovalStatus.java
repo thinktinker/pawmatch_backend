@@ -1,8 +1,8 @@
 package com.example.pawmatch.model;
 
-public enum EnumExperienceLevel {
+public enum EnumApprovalStatus {
 
-    NONE,               // 0
-    ONE_TO_THREE,       // 1
-    MORE_THAN_THREE     // 2
+    PENDING,              // 0
+    APPROVED,             // 1
+    REJECTED              // 2
 }

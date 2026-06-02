@@ -24,17 +24,17 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;                                                         // Integer Id (Auto-increment)
+    private Integer id;                                                         // Integer Id (Auto-increment)
 
     @Column(nullable = false)
     @NotBlank(message = "First name must not be empty.")
     @Size(min = 2, message = "Minimum 2 characters for first name.")
-    String firstName;                                                   // String firstName
+    private String firstName;                                                   // String firstName
 
     @Column(nullable = false)
     @NotBlank(message = "Last name must not be empty.")
     @Size(min = 2, message = "Minimum 2 characters for last name.")
-    String lastName;                                                    // String lastName
+    private String lastName;                                                    // String lastName
 
     @Column(nullable = false, unique = true)
     @NotBlank(message = "Email must not be empty.")
@@ -42,14 +42,14 @@ public class User implements UserDetails {
            flags = Pattern.Flag.CASE_INSENSITIVE,
            message = "Email is not valid."
     )
-    String email;                                                       // String Email
+    private String email;                                                       // String Email
 
     @Column
     @Pattern(
             regexp = "^$|^[689]\\d{7}$",
             message = "Phone number is optional, but must be 8 digits, starting with 6, 8, or 9."
     )
-    String phone;                                                               // String Phone
+    private String phone;                                                       // String Phone
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -62,7 +62,11 @@ public class User implements UserDetails {
     private EnumExperienceLevel experienceLevel = EnumExperienceLevel.NONE;     // String Housing Type
 
     @Column
-    String imageUrl;                                                            // String Image URL
+    private String imageUrl;                                                    // String Image URL
+
+    @Column
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Application> applications;
 
     // ^ start
     // At least:
@@ -74,7 +78,7 @@ public class User implements UserDetails {
     // - 8 characters long {8,}
     // $ end
     @Column(nullable = false)
-    @NotBlank(message = "Password cannot be blank.")                    // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Please use a strong password.")
+    @NotBlank(message = "Password cannot be blank.")                            // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Please use a strong password.")
     private String password;
 
     @Column(nullable = false)
