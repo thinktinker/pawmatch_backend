@@ -1,5 +1,9 @@
 package com.example.pawmatch.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -62,6 +66,7 @@ public class User implements UserDetails {
     private EnumExperienceLevel experienceLevel = EnumExperienceLevel.NONE;     // String Housing Type
 
     @Column
+    @Lob
     private String imageUrl;                                                    // String Image URL
 
     @Column
@@ -70,6 +75,7 @@ public class User implements UserDetails {
 
     @Column
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Application> applications;
 
     // ^ start
@@ -83,6 +89,7 @@ public class User implements UserDetails {
     // $ end
     @Column(nullable = false)
     @NotBlank(message = "Password cannot be blank.")                            // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Please use a strong password.")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(nullable = false)
@@ -124,10 +131,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
-
-    // This puts a heavy load on the User entity when rendering the results
-    // @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    // List<Feedback> feedbacks = new ArrayList<>();
 
     // Empty Constructor - covered by Lombok @NoArgsConstructor
     // All Arguments constructor - covered by Lombok

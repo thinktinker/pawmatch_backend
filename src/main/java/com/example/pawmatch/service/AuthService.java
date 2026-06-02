@@ -1,12 +1,13 @@
 package com.example.pawmatch.service;
 
-import com.example.pawmatch.dto.UserDTO;
-import com.example.pawmatch.dto.LoginDTO;
-import com.example.pawmatch.dto.RefreshTokenDTO;
-import com.example.pawmatch.dto.UpdateUserDTO;
+import com.example.pawmatch.dto.*;
 import com.example.pawmatch.exception.RegistrationFailedException;
 import com.example.pawmatch.exception.ResourceNotFoundException;
+import com.example.pawmatch.model.Application;
+import com.example.pawmatch.model.Pet;
 import com.example.pawmatch.model.User;
+import com.example.pawmatch.repository.ApplicationRepository;
+import com.example.pawmatch.repository.PetRepository;
 import com.example.pawmatch.repository.UserRepository;
 import com.example.pawmatch.utils.JWTUtils;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 
@@ -26,6 +28,10 @@ import java.util.HashMap;
 public class AuthService {
 
     private UserRepository userRepository;
+
+    private ApplicationRepository applicationRepository;
+
+    private PetRepository petRepository;
 
     @Autowired
     private JWTUtils jwtUtils;
@@ -210,5 +216,41 @@ public class AuthService {
                 .role(user.getRole())
                 .password(user.getPassword())
                 .build();
+    }
+
+    public ApplicationDTO adoptionApplication(Integer petId, ApplicationDTO applicationRequest) throws ResourceNotFoundException {
+
+        // the bearer token is passed in and used by authentication
+        // to extract the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(()->new ResourceNotFoundException("User not found."));
+
+        Pet pet = petRepository.findById(petId).orElseThrow(()->new ResourceNotFoundException("Pet not found."));
+
+        Application application = Application.builder()
+                .user(user)
+                .pet(pet)
+                .reason(applicationRequest.getReason())
+                .build();
+
+        Application result = applicationRepository.save(application);
+
+        if(result.getId() > 0){
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+            return ApplicationDTO.builder()
+                    .application_id(result.getId())
+                    .user_id(result.getUser().getId())
+                    .pet(result.getPet())
+                    .approvalStatus(result.getApprovalStatus())
+                    .reason(result.getReason())
+                    .applicationDate(result.getApplicationDate().format(dateTimeFormatter))
+                    .message("Your application has been sent.")
+                    .build();
+        }
+
+        throw new RegistrationFailedException("Unable to submit application.");
     }
 }
