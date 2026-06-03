@@ -18,6 +18,20 @@ public class WebConfig implements WebMvcConfigurer {
         String mainUrl= strUrl.concat(originHost).concat(":").concat(originPort);
 
         // Allow CORS for /auth/**
+        registry.addMapping("/public/**")                        // Set the pathPattern
+                .allowedOrigins(mainUrl)                                    // Restricted requests from: "http://127.0.0.1:5500"
+                .allowedMethods("GET", "POST")                              // Allowable HTTP methods
+                .allowCredentials(false)                                    // Credentials aren't typically needed for public API
+                .allowedHeaders(
+                        "Content-Type",                                     // Media type of request body (e.g. application/json)
+                        "Accept",                                           // Expected response format (e.g. application/json)
+                        "X-Requested-With",                                 // Identify AJAX requests (optional, common in web apps)
+                        "Cache-Control",                                    // Controls cache behavior (e.g. no-cache)
+                        "Origin",                                           // Sent by browser enforce CORS policies
+                        "User-Agent")                                       // Identify sender (optional, for logging or analytics)
+                .maxAge(3600);                                              // Set max age (sec) for CORS response cached by browser
+
+        // Allow CORS for /auth/**
         registry.addMapping("/auth/**")                          // Set the pathPattern
                 .allowedOrigins(mainUrl)                                    // Restricted requests from: "http://127.0.0.1:5500"
                 .allowedMethods("GET", "POST")                              // Allowable HTTP methods

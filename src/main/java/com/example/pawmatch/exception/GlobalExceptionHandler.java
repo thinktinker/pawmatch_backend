@@ -83,15 +83,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // 5. Catch-all global exception handler to prevent unhandled leakage (e.g. security filters)
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllExceptions(Exception ex) {
-
-        Map<String, String> errorResponse = new HashMap<>();
-
-        errorResponse.put("error", ex.getMessage()); // ex.getMessage()
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    //    @ExceptionHandler(Exception.class)
+    //    public ResponseEntity<Object> handleAllExceptions(Exception ex) {
+    //
+    //        Map<String, String> errorResponse = new HashMap<>();
+    //
+    //        errorResponse.put("error", ex.getMessage()); // ex.getMessage()
+    //
+    //        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    //    }
 
     // 6. Catch exception triggered by authenticationManager.authenticate()
     @ExceptionHandler(AuthenticationException.class)

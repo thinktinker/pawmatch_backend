@@ -10,4 +10,6 @@ public interface ApplicationRepository extends JpaRepository <Application, Integ
 
     // Derived: find user by id
     List<Application> findByUserId(Integer id);
+
+    List<Application> findByPetId(Integer id);
 }
