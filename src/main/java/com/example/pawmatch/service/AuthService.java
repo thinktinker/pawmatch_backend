@@ -20,7 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 @Builder
@@ -141,6 +143,8 @@ public class AuthService {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .address(user.getAddress())
+                .housingType(user.getHousingType())
+                .experienceLevel(user.getExperienceLevel())
                 .imageUrl(user.getImageUrl())
                 .build();
     }
@@ -158,8 +162,9 @@ public class AuthService {
             _user.setPhone(updateRequest.getPhone());
             _user.setEmail(updateRequest.getEmail());
             _user.setAddress(updateRequest.getAddress());
+            _user.setHousingType(updateRequest.getHousingType());
+            _user.setExperienceLevel(updateRequest.getExperienceLevel());
             _user.setImageUrl(updateRequest.getImageUrl());
-
 
             if(updateRequest.getPassword() != null && !updateRequest.getPassword().isEmpty())
                 _user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
@@ -252,5 +257,36 @@ public class AuthService {
         }
 
         throw new RegistrationFailedException("Unable to submit application.");
+    }
+
+    public List<ApplicationDTO> adoptionList() throws ResourceNotFoundException {
+        // the bearer token is passed in and used by authentication
+        // to extract the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(()->new ResourceNotFoundException("User not found."));
+
+        // Look for Applications that has the user's id
+        List<Application> applicationList = applicationRepository.findByUserId(user.getId());
+
+        List<ApplicationDTO> userAdoptionList = new ArrayList<>();
+
+        applicationList.forEach(application -> {
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+            userAdoptionList.add(
+                    ApplicationDTO.builder()
+                            .application_id(application.getId())
+                            .user_id(user.getId())
+                            .pet(application.getPet())
+                            .approvalStatus(application.getApprovalStatus())
+                            .applicationDate(application.getApplicationDate().format(dateTimeFormatter))
+                            .reason(application.getReason())
+                            .build()
+            );
+        });
+
+        return userAdoptionList;
     }
 }

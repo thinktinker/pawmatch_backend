@@ -1,5 +1,7 @@
 package com.example.pawmatch.dto;
 
+import com.example.pawmatch.model.EnumExperienceLevel;
+import com.example.pawmatch.model.EnumHousingType;
 import com.example.pawmatch.model.User;
 import com.example.pawmatch.model.EnumRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -39,6 +41,8 @@ public class UpdateUserDTO {
 
     private String phone;
     private String address;
+    private EnumHousingType housingType;
+    private EnumExperienceLevel experienceLevel;
     private String imageUrl;
     private String token;
     private String refreshToken;

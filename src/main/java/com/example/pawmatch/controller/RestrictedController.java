@@ -34,4 +34,10 @@ public class RestrictedController {
         return new ResponseEntity<>(authService.adoptionApplication(pet_id, applicationRequest), HttpStatus.OK);
     }
 
+    // Path variable id refers to the user's id
+    @GetMapping("/adoptionlist")
+    public ResponseEntity<Object> adoptionList() throws ResourceNotFoundException {
+        return new ResponseEntity<>(authService.adoptionList(), HttpStatus.OK);
+    }
+
 }
