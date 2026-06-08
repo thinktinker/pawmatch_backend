@@ -241,6 +241,9 @@ public class AuthService {
 
         Application result = applicationRepository.save(application);
 
+        System.out.println("Saved application id: " + result.getId());
+        System.out.println("Application date: " + result.getApplicationDate());
+
         if(result.getId() > 0){
 
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");

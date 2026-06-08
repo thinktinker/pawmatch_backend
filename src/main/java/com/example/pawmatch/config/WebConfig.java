@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private static final String originPort = "5500";
+    private static final String originPort = "5501";
 
     private static final String originHost = "127.0.0.1";
 
@@ -60,6 +60,22 @@ public class WebConfig implements WebMvcConfigurer {
                         "Origin",                                           // Sent by browser enforce CORS policies
                         "User-Agent")                                       // Identify sender (optional, for logging or analytics)
                 .maxAge(3600);                                              // Set max age (sec) for CORS response cached by browser
+
+        // Allow CORS for /admin/**
+        registry.addMapping("/admin/**")
+                .allowedOrigins(mainUrl)
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowCredentials(true)
+                .allowedHeaders(
+                        "Authorization",
+                        "Content-Type",
+                        "Accept",
+                        "X-Requested-With",
+                        "Cache-Control",
+                        "X-CSRF-Token",
+                        "Origin",
+                        "User-Agent")
+                .maxAge(3600);
 
     }
 }

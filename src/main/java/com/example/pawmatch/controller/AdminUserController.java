@@ -142,6 +142,8 @@ public class AdminUserController {
         return new ResponseEntity<>(pets, HttpStatus.OK); // 200
     }
 
+
+
     @GetMapping("/pet/{id}")
     public ResponseEntity<Object> getPetById(@PathVariable("id")Integer id) throws ResourceNotFoundException{
 
@@ -151,6 +153,33 @@ public class AdminUserController {
     }
 
     // TODO - update pet, delete pet
+
+    @DeleteMapping("/pet/{id}")
+    public ResponseEntity<Object> deletePetById(
+            @PathVariable("id") Integer id)
+            throws ResourceNotFoundException {
+
+        Pet pet = petService.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Pet not found."));
+
+        petService.deleteById(pet.getId());
+
+        return new ResponseEntity<>(pet, HttpStatus.OK);
+    }
+
+    @GetMapping("/all/applications")
+    public ResponseEntity<Object> allApplications() throws ResourceNotFoundException {
+
+        System.out.println("ALL APPLICATIONS ENDPOINT HIT");
+
+        List<Application> applicationList = applicationService.findAll();
+
+        if(applicationList.isEmpty())
+            throw new ResourceNotFoundException("No applications found.");
+
+        return new ResponseEntity<>(applicationList, HttpStatus.OK);
+    }
 
     @GetMapping("/all/applications/{id}")
     public ResponseEntity<Object> allApplications(@PathVariable("id")Integer pet_id) throws ResourceNotFoundException{
@@ -179,7 +208,9 @@ public class AdminUserController {
 
         // Get the pet and update the pet's status
         // get pet by id and return the response, if no returned pet, throw ResourceNotFoundException
-        Pet pet = petService.findById(id).map(_pet->{
+        Pet pet = petService.findById(
+                application.getPet().getId()
+        ).map(_pet -> {
 
             // Get the pet and update the pet adoption status
             if(application.getApprovalStatus().equals(EnumApprovalStatus.APPROVED))
